@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nail Polish Quality Classifier</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column; /* Align content in a vertical stack */
+            justify-content: center; /* Center content vertically if needed */
+            align-items: center; /* Center content horizontally */
+            min-height: 100vh; /* Optional: Make the body full-height for better centering */
+            margin: 0; /* Remove default margin for consistent centering */
+        }
+        #drop-zone {
+            width: 300px;
+            height: 200px;
+            border: 2px dashed #007BFF;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: #007BFF;
+            font-size: 18px;
+            text-align: center;
+            flex-direction: column;
+            cursor: pointer;
+            position: relative;
+        }
+        #drop-zone.dragover {
+            background-color: #f0f8ff;
+            border-color: #0056b3;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #fileInput {
+            display: none;
+        }
+        #preview {
+            max-width: 100%;
+            max-height: 100px;
+            margin: 10px auto;
+            display: none;
+        }
+        #file-name {
+            font-size: 14px;
+            margin-top: 10px;
+            color: #333;
+        }
+        #drop-zone-text {
+            color: #007BFF;
+        }
+        #result-image {
+            max-width: 200px;
+            margin-top: 20px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gel Nail Polish Quality Checker</h1>
+    <p>Upload an image of your gel nail polish to check the application quality.</p>
+    
+    <!-- Drag-and-drop area -->
+    <div id="drop-zone">
+        <span id="drop-zone-text">Drag and drop an image here or click to select</span>
+        <img id="preview" alt="Image preview">
+        <div id="file-name"></div>
+    </div>
+    <input type="file" id="fileInput" name="file" accept="image/*">
+
+    <button id="uploadButton">Check Now</button>
+    <div id="result"></div>
+    <img id="result-image" alt="Result image">
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('fileInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const preview = document.getElementById('preview');
+        const fileNameDisplay = document.getElementById('file-name');
+        const dropZoneText = document.getElementById('drop-zone-text');
+        const resultDiv = document.getElementById('result');
+        const resultImage = document.getElementById('result-image');
+        let selectedFile = null;
+
+        // Handle drag and drop events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                selectedFile = files[0];
+                displayImagePreview(selectedFile);
+                fileNameDisplay.textContent = `File: ${selectedFile.name}`;
+                dropZoneText.style.display = 'none'; // Hide the placeholder text
+            }
+        });
+
+        // Handle click to select a file
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            selectedFile = e.target.files[0];
+            if (selectedFile) {
+                displayImagePreview(selectedFile);
+                fileNameDisplay.textContent = `File: ${selectedFile.name}`;
+                dropZoneText.style.display = 'none'; // Hide the placeholder text
+            }
+        });
+
+        // Display the selected image preview
+        function displayImagePreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result; // Set the image preview source
+                preview.style.display = 'block'; // Show the image
+            };
+            reader.readAsDataURL(file); // Read the file as a data URL
+        }
+
+        // Handle upload button click
+        uploadButton.addEventListener('click', async () => {
+            if (!selectedFile) {
+                alert('Please select a file first.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+            if (result.prediction) {
+                resultDiv.innerText = `Result: ${result.prediction}`;
+                // Show corresponding result image
+                if (result.prediction === 'Nice Manicure') {
+                    resultImage.src = '/static/images/good.png'; // Replace with your image path
+                } else if (result.prediction === 'Needs Improvement') {
+                    resultImage.src = '/static/images/bad.png'; // Replace with your image path
+                }
+                resultImage.style.display = 'block'; // Display the result image
+            } else {
+                resultDiv.innerText = 'Error processing the file.';
+                resultImage.style.display = 'none'; // Hide the result image
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
