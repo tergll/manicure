@@ -10,7 +10,7 @@ from PIL import Image
 app = Flask(__name__)
 
 # Load the trained model
-MODEL_PATH = 'model.pkl'
+MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model.pkl')
 with open(MODEL_PATH, 'rb') as model_file:
     model = pickle.load(model_file)
 
