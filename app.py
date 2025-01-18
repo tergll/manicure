@@ -6,6 +6,7 @@ import numpy as np
 import os
 from PIL import Image
 
+# Create the Flask app
 app = Flask(__name__)
 
 # Load the trained model
