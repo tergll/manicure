@@ -54,4 +54,6 @@ def predict():
 if __name__ == '__main__':
     # Ensure the upload folder exists
     os.makedirs('uploads', exist_ok=True)
-    app.run(debug=True)
+    # app.run(debug=True)
+    # import os
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
