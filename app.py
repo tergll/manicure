@@ -47,15 +47,15 @@ def predict():
     img_array = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
     img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension (1, 160, 160, 3)
 
+    return jsonify({'prediction': 0})
+    # # Make prediction
+    # prediction = model.predict(img_array)
+    # predicted_label = labels[int(prediction[0])]
     
-    # Make prediction
-    prediction = model.predict(img_array)
-    predicted_label = labels[int(prediction[0])]
+    # # Remove the file after prediction
+    # os.remove(file_path)
     
-    # Remove the file after prediction
-    os.remove(file_path)
-    
-    return jsonify({'prediction': predicted_label})
+    # return jsonify({'prediction': predicted_label})
 
 if __name__ == '__main__':
     # Ensure the upload folder exists
