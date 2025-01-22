@@ -31,7 +31,7 @@ def index():
 def predict():
     if 'file' not in request.files:
         return jsonify({'error': 'No file uploaded'})
-    
+    print("files")
     file = request.files['file']
     if file.filename == '':
         return jsonify({'error': 'No file selected'})
