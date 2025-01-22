@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 import os
 from PIL import Image
-
+import tensorflow as tf
 # Disable GPU
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 # Create the Flask app
@@ -60,7 +60,7 @@ def predict():
 if __name__ == '__main__':
     # Ensure the upload folder exists
     os.makedirs('uploads', exist_ok=True)
-    # app.run(debug=True)
+    app.run(debug=True)
     # import os
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-    print("Server running on port 5000")
+    # app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    # print("Server running on port 5000")
