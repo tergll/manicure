@@ -4,6 +4,8 @@ import numpy as np
 import os
 from PIL import Image
 
+# Disable GPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 # Create the Flask app
 app = Flask(__name__)
 
@@ -13,6 +15,8 @@ with open(MODEL_PATH, 'rb') as model_file:
     model = pickle.load(model_file)
     print('Model loaded')
     print(model)
+    print("Is TensorFlow using GPU?", tf.test.is_gpu_available())
+
 
 # Define labels
 labels = {0: 'Needs Improvement', 1: 'Nice Manicure'}
@@ -59,3 +63,4 @@ if __name__ == '__main__':
     # app.run(debug=True)
     # import os
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    print("Server running on port 5000")
