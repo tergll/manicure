@@ -11,6 +11,8 @@ app = Flask(__name__)
 MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model.pkl')
 with open(MODEL_PATH, 'rb') as model_file:
     model = pickle.load(model_file)
+    print('Model loaded')
+    print(model)
 
 # Define labels
 labels = {0: 'Needs Improvement', 1: 'Nice Manicure'}
