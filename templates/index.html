@@ -163,8 +163,23 @@
             });
 
             const result = await response.json();
-            if (result.prediction) {
-                resultDiv.innerText = `Result: ${result.prediction}`;
+            // if (result.prediction) {
+            //     resultDiv.innerText = `Result: ${result.prediction}`;
+            //     // Show corresponding result image
+            //     if (result.prediction === 'Nice Manicure') {
+            //         resultImage.src = '/static/images/good.png'; // Replace with your image path
+            //     } else if (result.prediction === 'Needs Improvement') {
+            //         resultImage.src = '/static/images/bad.png'; // Replace with your image path
+            //     }
+            //     resultImage.style.display = 'block'; // Display the result image
+            // } else {
+            //     resultDiv.innerText = 'Error processing the file.';
+            //     resultImage.style.display = 'none'; // Hide the result image
+            // }
+            if (result.prediction && result.raw_value !== undefined) {
+                const confidence = (result.raw_value * 100).toFixed(2); // Convert to percentage
+                resultDiv.innerText = `Result: ${result.prediction} (Confidence: ${confidence}%)`;
+        
                 // Show corresponding result image
                 if (result.prediction === 'Nice Manicure') {
                     resultImage.src = '/static/images/good.png'; // Replace with your image path
@@ -175,7 +190,8 @@
             } else {
                 resultDiv.innerText = 'Error processing the file.';
                 resultImage.style.display = 'none'; // Hide the result image
-            }
+            }    
+            
         });
     </script>
 </body>
