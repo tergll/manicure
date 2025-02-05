@@ -41,13 +41,11 @@ def predict():
     file.save(file_path)
     
     # Preprocess the image
-    # Preprocess the image
     img = Image.open(file_path).convert('RGB')  # Ensure the image is in RGB format
     img = img.resize((160, 160))  # Resize to (160, 160)
     img_array = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
     img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension (1, 160, 160, 3)
 
-    return jsonify({'prediction': 0})
     # Make prediction
     prediction = model.predict(img_array)
     predicted_label = labels[int(prediction[0])]
@@ -56,11 +54,11 @@ def predict():
     os.remove(file_path)
     
     return jsonify({'prediction': predicted_label})
+    
 
 if __name__ == '__main__':
     # Ensure the upload folder exists
     os.makedirs('uploads', exist_ok=True)
     # app.run(debug=True)
-    # import os
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
     print("Server running on port 5000")
