@@ -30,34 +30,6 @@ labels = {0: 'Needs Improvement', 1: 'Nice Manicure'}
 def index():
     return render_template('index.html')
 
-# Route for prediction
-# @app.route('/predict', methods=['POST'])
-# def predict():
-#     if 'file' not in request.files:
-#         return jsonify({'error': 'No file uploaded'})
-#     print("files")
-#     file = request.files['file']
-#     if file.filename == '':
-#         return jsonify({'error': 'No file selected'})
-    
-#     # Save the file
-#     file_path = os.path.join('uploads', file.filename)
-#     file.save(file_path)
-    
-#     # Preprocess the image
-#     img = Image.open(file_path).convert('RGB')  # Ensure the image is in RGB format
-#     img = img.resize((160, 160))  # Resize to (160, 160)
-#     img_array = np.array(img) / 255.0  # Normalize pixel values to [0, 1]
-#     img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension (1, 160, 160, 3)
-
-#     # Make prediction
-#     prediction = model.predict(img_array)
-#     predicted_label = labels[int(prediction[0])]
-    
-#     # Remove the file after prediction
-#     os.remove(file_path)
-    
-#     return jsonify({'prediction': predicted_label})
 @app.route('/predict', methods=['POST'])
 def predict():
     if 'file' not in request.files:
@@ -70,16 +42,17 @@ def predict():
     # Process the image in-memory (no disk I/O)
     img = Image.open(file.stream).convert('RGB')  # Ensure RGB format
     img = img.resize((160, 160))  # Resize to (160, 160)
-    img_array = (np.array(img) / 127.5) - 1
+    img_array = np.array(img, dtype=np.float32) / 127.5 - 1  # Convert to [-1,1] range
     img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension (1, 160, 160, 3)
 
-    # Run inference using TensorFlow Lite
-    interpreter.set_tensor(input_details[0]['index'], img_array)
+    # ✅ Run inference using TensorFlow Lite
+    interpreter.set_tensor(input_details[0]['index'], img_array)  # Float32 input
     interpreter.invoke()
     prediction = interpreter.get_tensor(output_details[0]['index'])
 
-    predicted_class = int(prediction[0] > 0.5)  # Converts probability to 0 or 1
-    predicted_label = labels[predicted_class]  # Maps to label
+    # ✅ Convert output to binary class
+    predicted_label = labels[int(prediction[0] > 0.5)]
+
     return jsonify({'prediction': predicted_label})
 
 if __name__ == '__main__':
