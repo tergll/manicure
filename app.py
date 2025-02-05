@@ -53,8 +53,8 @@ def predict():
     # ✅ Convert output to binary class
     predicted_label = labels[int(prediction[0] > 0.5)]
 
-    return jsonify({'prediction': predicted_label})
-    print("🚀", prediction[0])
+    return jsonify({'prediction': predicted_label, 'raw_value': float(prediction[0])})
+
 
 if __name__ == '__main__':
     # Ensure the upload folder exists
