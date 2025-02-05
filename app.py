@@ -70,7 +70,7 @@ def predict():
     # Process the image in-memory (no disk I/O)
     img = Image.open(file.stream).convert('RGB')  # Ensure RGB format
     img = img.resize((160, 160))  # Resize to (160, 160)
-    img_array = np.array(img, dtype=np.float32) / 255.0  # Normalize
+    img_array = (np.array(img) / 127.5) - 1
     img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension (1, 160, 160, 3)
 
     # Run inference using TensorFlow Lite
@@ -78,11 +78,9 @@ def predict():
     interpreter.invoke()
     prediction = interpreter.get_tensor(output_details[0]['index'])
 
-    # Convert output to integer and get label
-    predicted_label = labels[int(prediction[0])]  # Direct integer conversion
-
+    predicted_class = int(prediction[0] > 0.5)  # Converts probability to 0 or 1
+    predicted_label = labels[predicted_class]  # Maps to label
     return jsonify({'prediction': predicted_label})
-
 
 if __name__ == '__main__':
     # Ensure the upload folder exists
