@@ -178,7 +178,7 @@
             // }
             if (result.prediction && result.raw_value !== undefined) {
                 const confidence = (result.raw_value * 100).toFixed(2); // Convert to percentage
-                resultDiv.innerText = `Result: ${result.prediction}\nScore: ${scorePercentage}/100`;
+                resultDiv.innerText = `Result: ${result.prediction}\nScore: ${confidence}/100`;
         
                 // Show corresponding result image
                 if (result.prediction === 'Nice Manicure') {
